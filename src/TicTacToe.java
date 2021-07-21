@@ -23,7 +23,7 @@ public class TicTacToe implements Runnable {
     /** This method takes input from the user
      *  At any given time, only one thread can execute the method.
      */
-    private synchronized static int[] input(String gameName, String playerName) {
+    private static int[] input(String gameName, String playerName) {
         System.out.println("Started input() for instance: " + gameName + "Enter (row, col) player: " + playerName);
         int[] userInput = new int[]{-1, -1};
         try {
@@ -43,7 +43,7 @@ public class TicTacToe implements Runnable {
     /** This method draws the board on the console.
      * At any given time, only one thread can execute the given method.
      */
-    private synchronized static void drawBoard(Board board, String gameName) {
+    private static void drawBoard(Board board, String gameName) {
         System.out.println("Started drawBoard() for instance: " + gameName);
         for (int i=0 ; i<board.getDimension() ; i++) {
             for (int j=0 ; j<board.getDimension() ; j++) {
@@ -169,7 +169,6 @@ public class TicTacToe implements Runnable {
                     System.out.println("Error!");
                     return;
             }
-
         }
     }
 
