@@ -1,20 +1,19 @@
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Scanner;
 
 public class MainClass {
     public static void main(String args[]) throws InterruptedException {
-
-        ExecutorService executorService = Executors.newFixedThreadPool(Const.THREAD_POOL_COUNT);
-
-        // Start instances
-        executorService.execute(new TicTacToe("Game 1", "P1_1", "P2_1"));
-        executorService.execute(new TicTacToe("Game 2", "P1_2", "P2_2"));
-        executorService.execute(new TicTacToe("Game 3", "P1_3", "P2_3"));
-        executorService.submit(new TicTacToe("", "", " ef"));
-        executorService.shutdown();
-        while (!executorService.isTerminated()) {
-            Thread.sleep(10000);
-        }
-        TicTacToe.end();
+        Scanner scanner = new Scanner(System.in);
+//        System.out.println("Enter the ip of the server to connect...");
+//        String ip = scanner.next();
+//        System.out.println("Enter the port:");
+//        int port = scanner.nextInt();
+        System.out.println("Enter player 1 name...");
+        String player1Name = scanner.next();
+        System.out.println("Enter player 2 name...");
+        String player2Name = scanner.next();
+        TicTacToe game = new TicTacToe("New Game", player1Name, player2Name, "localhost", 8888);
+        game.run();
+        game.end();
+        scanner.close();
     }
 }

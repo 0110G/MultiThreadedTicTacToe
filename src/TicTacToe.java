@@ -1,7 +1,7 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class TicTacToe implements Runnable {
+public class TicTacToe {
 
     private String gameInstanceName;
     private Player player1;
@@ -9,15 +9,21 @@ public class TicTacToe implements Runnable {
     private Board board;
     private int remainingSquares;
     private GameState gameState;
+    private Connector connector;
+
     private static final Scanner scanner = new Scanner(System.in);
 
-    TicTacToe(String instanceName, String player1Name, String player2Name) {
+
+    // Connection serverConnection;
+
+    TicTacToe(String instanceName, String player1Name, String player2Name, String ip, int port) {
         this.gameInstanceName = instanceName;
         this.player1 = new Player(player1Name, CellState.FILLED_PLAYER_1.getMark());
         this.player2 = new Player(player2Name, CellState.FILLED_PLAYER_2.getMark());
         this.board = new Board(Const.DEFAULT_DIMENSION);
         this.remainingSquares = board.getDimension() * board.getDimension();
         this.gameState = GameState.PLAYER1_CHANCE;
+        this.connector = new Connector(ip, port);
     }
 
     /** This method takes input from the user
@@ -138,20 +144,24 @@ public class TicTacToe implements Runnable {
     }
 
     private void gameLoop() {
+        connector.sendToServer(player1.getName() + " " + player2.getName());
         while (true) {
             switch (getGameState()) {
                 case PLAYER1_CHANCE:
                     int[] inp = input(gameInstanceName, player1.getMark());    // Synchronous call
                     if (inp[0] < 0 || inp[1] < 0) { break;}
                     if (!board.setStateAtPosition(inp[0], inp[1], CellState.FILLED_PLAYER_1)) { break; }
-                    drawBoard(board, gameInstanceName); // Synchronous
-                    gameState = GameState.PLAYER2_CHANCE;   // parallel
+                    connector.sendToServer(Integer.toString(inp[0]) + " " + Integer.toString(inp[1]));
+                    drawBoard(board, gameInstanceName);
+                    gameState = GameState.PLAYER2_CHANCE;
                     remainingSquares--;
                     break;
                 case PLAYER2_CHANCE:
                     inp = input(gameInstanceName, player2.getMark());
                     if (inp[0] < 0 || inp[1] < 0) {break;}
                     if (!board.setStateAtPosition(inp[0], inp[1], CellState.FILLED_PLAYER_2)) { break; }
+
+
                     drawBoard(board, gameInstanceName);
                     gameState = GameState.PLAYER1_CHANCE;
                     remainingSquares--;
@@ -172,11 +182,9 @@ public class TicTacToe implements Runnable {
         }
     }
 
-    public static void end() {
-        synchronized (scanner) {
-            if (scanner != null) {
-                scanner.close();
-            }
+    public void end() {
+        if (scanner != null) {
+            scanner.close();
         }
     }
 
@@ -191,7 +199,6 @@ public class TicTacToe implements Runnable {
         }
     }
 
-    @Override
     public void run() {
         gameLoop();
     }
