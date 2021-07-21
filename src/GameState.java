@@ -1,0 +1,8 @@
+public enum GameState {
+    PLAYER1_CHANCE,
+    PLAYER2_CHANCE,
+    DRAW,
+    PLAYER1_WIN,
+    PLAYER2_WIN,
+    INTERRUPTED_IN_BETWEEN;
+}
